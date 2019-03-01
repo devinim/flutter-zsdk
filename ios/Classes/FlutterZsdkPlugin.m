@@ -11,10 +11,16 @@
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
   if ([@"getPlatformVersion" isEqualToString:call.method]) {
-    result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
-  } else {
-    result(FlutterMethodNotImplemented);
-  }
+      [result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
+   }
+   else if ([@"discoverBluetoothDevices" isEqualToString:call.method]) {
+       discoverBluetoothDevices(result);
+   } else {
+     result(FlutterMethodNotImplemented);
+   }
 }
+       
+- (void)discoverBluetoothDevices:result:(FlutterResult)result {
 
+}
 @end
