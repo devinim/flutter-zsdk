@@ -41,31 +41,37 @@
 
 - (void)sendZplOverBluetooth:(NSString *)serial data:(NSString*)data result:(FlutterResult)result {
     
-    // Instantiate connection to Zebra Bluetooth accessory
-    //EAAccessoryManager *sam = [EAAccessoryManager sharedAccessoryManager];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+       
+        // Instantiate connection to Zebra Bluetooth accessory
+        EAAccessoryManager *sam = [EAAccessoryManager sharedAccessoryManager];
+        
+        id<ZebraPrinterConnection, NSObject> connection = [[MfiBtPrinterConnection alloc] initWithSerialNumber:serial];
+        
+        NSError *error = nil;
+        
+        BOOL success = [connection open];
+        
+        id<ZebraPrinter,NSObject> printer = [ZebraPrinterFactory getInstance:connection error:&error];
+        
+        NSData *dataBytes = [NSData dataWithBytes:[data UTF8String] length:[data length]];
+        
+        [connection write:dataBytes error:&error];
+        
+        /* success = success && [thePrinterConn write:[data dataUsingEncoding:NSUTF8StringEncoding] error:&error];*/
+        if (success != YES || error != nil) {
+            result([FlutterError errorWithCode:@"Error"
+                                       message: error.description
+                                       details:nil]);
+        }
+        
+        [connection close];
+        result(@"Wrote. Are you happy?");
+       // [connection release];
+        
+        
+    });
     
-    id<ZebraPrinterConnection, NSObject> connection = [[MfiBtPrinterConnection alloc] initWithSerialNumber:serial];
-    
-    NSError *error = nil;
-    
-    BOOL success = [connection open];
-    
-    id<ZebraPrinter,NSObject> printer = [ZebraPrinterFactory getInstance:connection error:&error];
-    
-    NSData *dataBytes = [NSData dataWithBytes:[data UTF8String] length:[data length]];
-    
-    [connection write:dataBytes error:&error];
-
-   /* success = success && [thePrinterConn write:[data dataUsingEncoding:NSUTF8StringEncoding] error:&error];*/
-    if (success != YES || error != nil) {
-        result([FlutterError errorWithCode:@"Error"
-                             message: error.description
-                             details:nil]);
-    }
-    
-    [connection close];
-    result(@"Wrote. Are you happy?");
-    //[thePrinterConn release];
 }
 
 /*
