@@ -37,8 +37,11 @@
      result(dict);
 }
 
-- (void)sendZplOverBluetooth:(NSString*) serial :(NSString*) data result:(FlutterResult)result {
+- (void)sendZplOverBluetooth:(NSString *)serial data:(NSString*)data result:(FlutterResult)result {
+    
     // Instantiate connection to Zebra Bluetooth accessory
+    //EAAccessoryManager *sam = [EAAccessoryManager sharedAccessoryManager];
+    
     id<ZebraPrinterConnection, NSObject> thePrinterConn = [[MfiBtPrinterConnection alloc] initWithSerialNumber:serial];
    
     
@@ -55,25 +58,28 @@
     
     [thePrinterConn close];
     result(@"Wrote. Are you happy?");
-    //[thePrinterConn release];
+   // [thePrinterConn release];
 }
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
     NSLog(@"Handle method call");
-  if ([@"getPlatformVersion" isEqualToString:call.method]) {
-      result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
-   }
-   else if ([@"discoverBluetoothDevices" isEqualToString:call.method]) {
+   if ([@"discoverBluetoothDevices" isEqualToString:call.method]) {
        [self discoverBluetoothDevices:result];
    }
    else if ([@"getDeviceProperties" isEqualToString:call.method]) {
-       NSString* serial = call.arguments[@"mac"];
+       NSDictionary *arguments = [call arguments];
+       
+       NSString* serial = arguments[@"mac"];
+       
        [self getDeviceProperties:serial result:result];
    }
    else if ([@"sendZplOverBluetooth" isEqualToString:call.method]) {
-       NSString* serial = call.arguments[@"mac"];
-       NSString* data = call.arguments[@"data"];
-       [self sendZplOverBluetooth:serial:data result:result];
+       NSDictionary *arguments = [call arguments];
+       
+       NSString *serial = arguments[@"mac"];
+       NSString *data = arguments[@"data"];
+       
+       [self sendZplOverBluetooth:serial data:data result:result];
    }
    else {
      result(FlutterMethodNotImplemented);
