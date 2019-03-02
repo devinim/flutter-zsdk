@@ -95,7 +95,7 @@ class _MyAppState extends State<MyApp> {
       platformVersion = 'Failed to get platform version.';
     }
 
-    /*Map<String, String> devices;
+    Map<String, String> devices;
     try {
       devices = await FlutterZsdk.discoverBluetoothDevices();
 
@@ -105,9 +105,9 @@ class _MyAppState extends State<MyApp> {
         print('Device: $k [$v]');
       });
     } catch (e) {
-      print('Hata' + e);
+      print('Error' + e);
     }
-    */
+
 /*
     try {
       print('Testing with props: ' + devices.keys.first);
