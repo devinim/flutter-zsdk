@@ -1,6 +1,8 @@
 #import "FlutterZsdkPlugin.h"
 #import <ExternalAccessory/ExternalAccessory.h>
 #import "MfiBtPrinterConnection.h"
+#import "ZebraPrinter.h"
+#import "ZebraPrinterFactory.h"
 
 @implementation FlutterZsdkPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
@@ -42,25 +44,31 @@
     // Instantiate connection to Zebra Bluetooth accessory
     //EAAccessoryManager *sam = [EAAccessoryManager sharedAccessoryManager];
     
-    id<ZebraPrinterConnection, NSObject> thePrinterConn = [[MfiBtPrinterConnection alloc] initWithSerialNumber:serial];
-   
+    id<ZebraPrinterConnection, NSObject> connection = [[MfiBtPrinterConnection alloc] initWithSerialNumber:serial];
     
-    BOOL success = [thePrinterConn open];
-   
     NSError *error = nil;
+    
+    BOOL success = [connection open];
+    
+    id<ZebraPrinter,NSObject> printer = [ZebraPrinterFactory getInstance:connection error:&error];
+    
+    NSData *dataBytes = [NSData dataWithBytes:[data UTF8String] length:[data length]];
+    
+    [connection write:dataBytes error:&error];
 
-    success = success && [thePrinterConn write:[data dataUsingEncoding:NSUTF8StringEncoding] error:&error];
+   /* success = success && [thePrinterConn write:[data dataUsingEncoding:NSUTF8StringEncoding] error:&error];*/
     if (success != YES || error != nil) {
         result([FlutterError errorWithCode:@"Error"
                              message: error.description
                              details:nil]);
     }
     
-    [thePrinterConn close];
+    [connection close];
     result(@"Wrote. Are you happy?");
     //[thePrinterConn release];
 }
 
+/*
 -(void)test:(FlutterResult) result {
     NSString *serialNumber = @"";
     //Find the Zebra Bluetooth Accessory
@@ -90,6 +98,7 @@
    // [thePrinterConn release];
       result(@"Wrote. Are you happy?");
 }
+ */
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
     NSLog(@"Handle method call");
@@ -109,8 +118,8 @@
        NSString *serial = arguments[@"mac"];
        NSString *data = arguments[@"data"];
        
-      // [self sendZplOverBluetooth:serial data:data result:result];
-       [self test:result];
+       [self sendZplOverBluetooth:serial data:data result:result];
+      // [self test:result];
    }
    else {
      result(FlutterMethodNotImplemented);
