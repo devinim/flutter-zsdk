@@ -47,7 +47,8 @@ class _MyAppState extends State<MyApp> {
         print('Device: ${d.friendlyName} [${d.mac}]');
       });
     } catch (e) {
-      throw e;
+      showDialog(context: context, child: Text(e));
+      //throw e;
       print('Error' + e);
     }
 
@@ -102,9 +103,14 @@ class _MyAppState extends State<MyApp> {
             title: Text(d.friendlyName),
             subtitle: Text(d.mac),
             trailing: IconButton(
-              icon: Icon(Icons.print),
-              onPressed: () => d.sendZplOverBluetooth(FLUTTER_LOGO_ZPL),
-            ),
+                icon: Icon(Icons.print),
+                onPressed: () {
+                  try {
+                    d.sendZplOverBluetooth(FLUTTER_LOGO_ZPL);
+                  } catch (e) {
+                    showDialog(context: context, child: Text(e));
+                  }
+                }),
           ),
         );
       });
