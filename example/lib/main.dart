@@ -123,14 +123,14 @@ class _MyAppState extends State<MyApp> {
       print('Hata' + e);
     }
 */
-    try {
+    /*try {
       print('Testing to write to : AC:3F:A4:5B:EB:1F with length of string ' + zplData.length.toString());
 
       await FlutterZsdk.sendZplOverBluetooth("AC:3F:A4:5B:EB:1F", zplData);
     } catch (e) {
       print('Hata' + e);
     }
-
+*/
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
