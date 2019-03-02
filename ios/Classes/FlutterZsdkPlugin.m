@@ -21,6 +21,22 @@
 }
        
 - (void)discoverBluetoothDevices:result:(FlutterResult)result {
+        NSString *serialNumber = @"";
+        NSString *name = @"";
 
+        NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+
+        EAAccessoryManager *sam = [EAAccessoryManager sharedAccessoryManager];
+        NSArray * connectedAccessories = [sam connectedAccessories];
+        for (EAAccessory *accessory in connectedAccessories) {
+            if([accessory.protocolStrings indexOfObject:@"com.zebra.rawport"] != NSNotFound){
+                serialNumber = accessory.serialNumber;
+                name = accessory.name;
+
+                [dict setObject:[name] forKey:serialNumber]
+            }
+        }
+        result = dict;
 }
+
 @end
