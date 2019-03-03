@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-import 'package:flutter/services.dart';
 import 'package:flutter_zsdk/flutter_zsdk.dart';
 
 void main() => runApp(MyApp());
@@ -51,30 +50,6 @@ class _MyAppState extends State<MyApp> {
       //throw e;
       print('Error' + e);
     }
-
-/*
-    try {
-      print('Testing with props: ' + devices.keys.first);
-
-      Map<String, Map<String, String>> props;
-
-      props = await FlutterZsdk.getDeviceProperties(devices.keys.first);
-
-      props.forEach((k, v) {
-        print("$k\t${v['set']}\t:${v['value']}");
-      });
-    } catch (e) {
-      print('Hata' + e);
-    }
-*/
-    /*try {
-      print('Testing to write to : AC:3F:A4:5B:EB:1F with length of string ' + zplData.length.toString());
-
-      await FlutterZsdk.sendZplOverBluetooth("AC:3F:A4:5B:EB:1F", zplData);
-    } catch (e) {
-      print('Hata' + e);
-    }
-*/
 
     if (!mounted) return;
 

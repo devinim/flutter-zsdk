@@ -1,7 +1,7 @@
 name: flutter_zsdk
 description: Zebra Link OS SDK Flutter Bindings
 version: 0.0.1
-author: Furkan S. Bulut
+author: Furkan S. Bulut  <fbulut@gmail.com>
 homepage: http://devinim.gen.tr
 
 environment:
