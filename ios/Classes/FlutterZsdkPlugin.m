@@ -48,32 +48,32 @@
 }
 
 - (void)getBatteryLevel:(NSString*) serial result:(FlutterResult)result {
-  
-    @try {
-        id<ZebraPrinterConnection, NSObject> connection = [[MfiBtPrinterConnection alloc] initWithSerialNumber:serial];
-        
-        NSError *error = nil;
-        
-        [connection open];
-        
-        NSString *battery = [SGD GET:@"power.percent_full" withPrinterConnection:connection error:&error];
-        
-        [connection close];
-        
-        if (error != nil) {
-            @throw [NSException exceptionWithName:@"Printer Error"
-                                           reason:[error description]
-                                           userInfo:nil];
+   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        @try {
+            id<ZebraPrinterConnection, NSObject> connection = [[MfiBtPrinterConnection alloc] initWithSerialNumber:serial];
+            
+            NSError *error = nil;
+            
+            [connection open];
+            
+            NSString *battery = [SGD GET:@"power.percent_full" withPrinterConnection:connection error:&error];
+            
+            [connection close];
+            
+            if (error != nil) {
+                @throw [NSException exceptionWithName:@"Printer Error"
+                                               reason:[error description]
+                                               userInfo:nil];
+            }
+            
+            result(battery);
         }
-        
-        result(battery);
-    }
-    @catch (NSException *exception) {
-        result([FlutterError errorWithCode:@"Error"
-                                   message: exception.reason
-                                   details:nil]);
-    }
-    
+        @catch (NSException *exception) {
+            result([FlutterError errorWithCode:@"Error"
+                                       message: exception.reason
+                                       details:nil]);
+        }
+    });
 }
 
 - (void)sendZplOverBluetooth:(NSString *)serial data:(NSString*)data result:(FlutterResult)result {
@@ -86,8 +86,8 @@
             id<ZebraPrinterConnection, NSObject> connection = [[MfiBtPrinterConnection alloc] initWithSerialNumber:serial];
             
             NSError *error = nil;
-            
-            BOOL success = [connection open];
+            //BOOL success =
+             [connection open];
             
             /*
              id<ZebraPrinter,NSObject> printer = [ZebraPrinterFactory getInstance:connection error:&error];
