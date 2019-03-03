@@ -44,7 +44,7 @@ class FlutterZsdk {
 
   static Future<String> _getBatteryLevel(String mac) async {
     dynamic d = await _channel.invokeMethod("getBatteryLevel", {"mac": mac});
-    return d.toString();
+    return d.toString().replaceAll("% Full", "");
   }
 
   static Future<void> _sendZplOverBluetooth(String mac, String data) async {
