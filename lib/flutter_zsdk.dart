@@ -8,9 +8,13 @@ class ZebraBluetoothDevice {
 
   ZebraBluetoothDevice(this.mac, this.friendlyName);
 
-  Future<Map<String, Map<String, String>>> properties() => FlutterZsdk.getDeviceProperties(mac);
+  Future<Map<String, Map<String, String>>> properties() => FlutterZsdk._getDeviceProperties(mac);
 
-  Future<void> sendZplOverBluetooth(String data) => FlutterZsdk.sendZplOverBluetooth(mac, data);
+  Future<String> batteryLevel() async {
+    return await FlutterZsdk._getBatteryLevel(mac);
+  }
+
+  Future<void> sendZplOverBluetooth(String data) => FlutterZsdk._sendZplOverBluetooth(mac, data);
 }
 
 class FlutterZsdk {
@@ -28,7 +32,7 @@ class FlutterZsdk {
     return devices;
   }
 
-  static Future<Map<String, Map<String, String>>> getDeviceProperties(String mac) async {
+  static Future<Map<String, Map<String, String>>> _getDeviceProperties(String mac) async {
     dynamic d = await _channel.invokeMethod("getDeviceProperties", {"mac": mac});
     Map<String, Map<String, String>> map = Map();
 
@@ -38,7 +42,12 @@ class FlutterZsdk {
     return map;
   }
 
-  static Future<void> sendZplOverBluetooth(String mac, String data) async {
+  static Future<String> _getBatteryLevel(String mac) async {
+    dynamic d = await _channel.invokeMethod("getBatteryLevel", {"mac": mac});
+    return d.toString();
+  }
+
+  static Future<void> _sendZplOverBluetooth(String mac, String data) async {
     await _channel.invokeMethod("sendZplOverBluetooth", {"mac": mac, "data": data});
   }
 }

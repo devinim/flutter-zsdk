@@ -26,11 +26,8 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
  * FlutterZsdkPlugin
  */
 public class FlutterZsdkPlugin implements MethodCallHandler {
-    /**
-     * Plugin registration.
-     */
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     public static void registerWith(Registrar registrar) {
         if (DEBUG) {
@@ -45,30 +42,6 @@ public class FlutterZsdkPlugin implements MethodCallHandler {
 
     public FlutterZsdkPlugin(Registrar registrar) {
         this.context = registrar.activeContext();
-
-        if (DEBUG) {
-//            Timer tm = new Timer();
-//
-//            TimerTask task = new TimerTask() {
-//                @Override
-//                public void run() {
-//                    System.out.println("Timer runs");
-//                    discoverBluetoothDevices(null);
-//                }
-//            };
-//
-//            TimerTask task2 = new TimerTask() {
-//                @Override
-//                public void run() {
-//                    System.out.println("Timer runs");
-//                    sendZplOverBluetooth("AC:3F:A4:5B:EB:1F");
-//                }
-//            };
-//
-//            tm.schedule(task, 6000);
-//            tm.schedule(task2, 15000);
-        }
-
     }
 
     @Override
@@ -86,22 +59,26 @@ public class FlutterZsdkPlugin implements MethodCallHandler {
                 }
                 getDeviceProperties((String) call.argument("mac"), result);
                 break;
+            case "getBatteryLevel":
+                if (DEBUG) {
+                    System.out.println("with arguments: {mac:" + call.argument("mac") + "}");
+                }
+                getBatteryLevel((String) call.argument("mac"), result);
+                break;
             case "sendZplOverBluetooth":
                 if (DEBUG) {
                     System.out.println("with arguments: {mac:" + call.argument("mac") + ", data: " + call.argument("data") + "}");
                 }
                 sendZplOverBluetooth((String) call.argument("mac"), (String) call.argument("data"), result);
                 break;
-            case "getPlatformVersion":
-                result.success("Android " + android.os.Build.VERSION.RELEASE);
-                break;
+
             default:
                 result.notImplemented();
         }
 
     }
 
-    void discoverBluetoothDevices(Result result) {
+    private void discoverBluetoothDevices(Result result) {
         final ZebraBlDiscoverer discoverer = new ZebraBlDiscoverer(result);
         new Thread(new Runnable() {
             public void run() {
@@ -118,6 +95,20 @@ public class FlutterZsdkPlugin implements MethodCallHandler {
                 }
             }
         }).start();
+    }
+
+    private void getBatteryLevel(String mac, Result result) {
+        try {
+            Connection connection = new BluetoothConnection(mac);
+            connection.open();
+
+            ZebraPrinterLinkOs printer = ZebraPrinterFactory.getLinkOsPrinter(connection);
+
+            result.success(printer.getSettingValue("power.percent_full"));
+
+        } catch (Exception e) {
+            result.error(e.getMessage(), null, null);
+        }
     }
 
     private void getDeviceProperties(String mac, Result result) {

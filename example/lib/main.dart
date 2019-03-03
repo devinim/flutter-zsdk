@@ -83,6 +83,16 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  String levelText = "Querying...";
+
+  _level(ZebraBluetoothDevice d) {
+    d.batteryLevel().then((t) {
+      setState(() {
+        levelText = t;
+      });
+    });
+  }
+
   Widget _listPrinters() {
     List<Widget> items = List();
 
@@ -98,19 +108,16 @@ class _MyAppState extends State<MyApp> {
         SizedBox(height: 50),
       ]);
       _devices.forEach((d) {
+        _level(d);
         items.add(
           ListTile(
             title: Text(d.friendlyName),
-            subtitle: Text(d.mac),
+            subtitle: Text(d.mac + "[%${levelText}]"),
+            leading: IconButton(icon: Icon(Icons.list), onPressed: () => d.properties()),
             trailing: IconButton(
-                icon: Icon(Icons.print),
-                onPressed: () {
-                  try {
-                    d.sendZplOverBluetooth(FLUTTER_LOGO_ZPL);
-                  } catch (e) {
-                    showDialog(context: context, child: Text(e));
-                  }
-                }),
+              icon: Icon(Icons.print),
+              onPressed: () => d.sendZplOverBluetooth(FLUTTER_LOGO_ZPL),
+            ),
           ),
         );
       });
