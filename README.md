@@ -29,17 +29,18 @@ For help getting started with Zebra Link-OS, view [online documentation.](https:
       ",^FS ^XZ";	
 		
 
-	print("Searching BL devices");
-    List<ZebraBluetoothDevice> devices = await FlutterZsdk.discoverBluetoothDevices();
-    print("Found ${devices.length} BL device(s)");
-    devices.forEach((ZebraBluetoothDevice printer) {
-      if (printer.friendlyName.toLowerCase().contains("zebra")) {
-        print("Running print");
-        printer.sendZplOverBluetooth(data).then((t) {
-          print("Printing complete");
-        });
-      }
-    });
+	
+print("Searching BL devices");
+List<ZebraBluetoothDevice> devices = await FlutterZsdk.discoverBluetoothDevices();
+print("Found ${devices.length} BL device(s)");
+devices.forEach((ZebraBluetoothDevice printer) {
+  if (printer.friendlyName.toLowerCase().contains("zebra")) {
+	print("Running print");
+	printer.sendZplOverBluetooth(data).then((t) {
+	  print("Printing complete");
+	});
+  }
+});
 ```
 
 
