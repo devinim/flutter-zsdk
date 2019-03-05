@@ -1,25 +1,13 @@
 # flutter_zsdk
 
-Zebra Link OS SDK Flutter Bindings
+Zebra Link OS SDK Flutter Bindings.
+This plugin flutter interface of Link-OS Multiplatform SDK for [Zebra Multiplatform Library](https://www.zebra.com/ap/en/support-downloads/printer-software/link-os-multiplatform-sdk.html)
 
 
 ## Getting Started
 
-#### IOS
-```
-This will only work with Zebra printers which have the Made For iPod/iPhone certification. 
-You need to include the External Accessory framework in your project to be able to use this class 
-You need to include the Zebra printer protocol string "com.zebra.rawport" in your info.plist 
-file under "Supported external accessory protocols" 
-You need to Set the key "Required Background modes" to "App Communicates with an accessory" 
-in your app's plist file
-```
-
-#### ANDROID
-```
-Android 6 and higher (API 23+) requires user permission 
-ACCESS_COARSE_LOCATION or ACCESS_FINE_LOCATION in your application manifest.
-```
+For help getting started with Flutter, view [online documentation.](https://www.flutter.io)
+For help getting started with Zebra Link-OS, view [online documentation.](https://www.zebra.com/ap/en/support-downloads/printer-software/link-os-multiplatform-sdk.html)
 
 ### How it Works
 ```dart
@@ -40,6 +28,7 @@ ACCESS_COARSE_LOCATION or ACCESS_FINE_LOCATION in your application manifest.
       ",gL01XFC,gM0XFE,gM07XF,gM03XF8,gM01XFC,gN0XFE,gN07XF,gN03XF8,gN01XFC,gO0XFE,gO07XF,gO03XF8,gO01XFC,gP0XFE,gP07XF,gR01VF8"
       ",^FS ^XZ";	
 		
+
 	print("Searching BL devices");
     List<ZebraBluetoothDevice> devices = await FlutterZsdk.discoverBluetoothDevices();
     print("Found ${devices.length} BL device(s)");
@@ -51,4 +40,21 @@ ACCESS_COARSE_LOCATION or ACCESS_FINE_LOCATION in your application manifest.
         });
       }
     });
+```
+
+
+#### IOS
+```
+This will only work with Zebra printers which have the Made For iPod/iPhone certification. 
+You need to include the External Accessory framework in your project to be able to use this class 
+You need to include the Zebra printer protocol string "com.zebra.rawport" in your info.plist 
+file under "Supported external accessory protocols" 
+You need to Set the key "Required Background modes" to "App Communicates with an accessory" 
+in your app's plist file
+```
+
+#### ANDROID
+```
+Android 6 and higher (API 23+) requires user permission 
+ACCESS_COARSE_LOCATION or ACCESS_FINE_LOCATION in your application manifest.
 ```
