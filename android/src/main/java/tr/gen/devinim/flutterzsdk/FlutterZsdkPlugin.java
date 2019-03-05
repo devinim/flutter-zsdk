@@ -27,7 +27,7 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
  */
 public class FlutterZsdkPlugin implements MethodCallHandler {
 
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     public static void registerWith(Registrar registrar) {
         if (DEBUG) {
