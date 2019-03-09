@@ -1,5 +1,6 @@
 package tr.gen.devinim.flutterzsdk;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.os.Looper;
 
@@ -121,11 +122,9 @@ public class FlutterZsdkPlugin implements MethodCallHandler {
             }
             result.success(devices);
             if (DEBUG) {
-                System.out.println("Trying to kill discovery thread");
-                this.interrupt();
-                System.out.println("Trying to kill discovery thread 222222");
-                this.stop();
+                System.out.println("Trying to stop discovery ");
             }
+            BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
         }
 
         @Override
@@ -134,6 +133,10 @@ public class FlutterZsdkPlugin implements MethodCallHandler {
                 System.out.println("ZebraBlDiscoverer: discoveryError:" + s);
             }
             result.error(s, null, null);
+            if (DEBUG) {
+                System.out.println("Trying to stop discovery ");
+            }
+            BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
         }
     }
 

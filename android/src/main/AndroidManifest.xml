@@ -2,4 +2,5 @@
   package="tr.gen.devinim.flutterzsdk">
 
 
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 </manifest>
