@@ -89,6 +89,7 @@ public class FlutterZsdkPlugin implements MethodCallHandler {
 
         Result result;
         String endMac;
+        boolean resultSent = false;
 
         private HashMap<String, String> devices = new HashMap<>();
 
@@ -143,9 +144,16 @@ public class FlutterZsdkPlugin implements MethodCallHandler {
 
         @Override
         public void discoveryFinished() {
+            if (resultSent) {
+                if (DEBUG) {
+                    System.out.println("ZebraBlDiscoverer: discoveryFinished {resultSent}");
+                    return;
+                }
+            }
             if (DEBUG) {
                 System.out.println("ZebraBlDiscoverer: discoveryFinished");
             }
+            resultSent = true;
             result.success(devices);
             //  BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
         }
@@ -155,10 +163,14 @@ public class FlutterZsdkPlugin implements MethodCallHandler {
             if (DEBUG) {
                 System.out.println("ZebraBlDiscoverer: discoveryError:" + s);
             }
-            result.error(s, null, null);
-            if (DEBUG) {
-                System.out.println("Trying to stop discovery ");
+            if (resultSent) {
+                if (DEBUG) {
+                    System.out.println("ZebraBlDiscoverer: discoveryError {resultSent}");
+                    return;
+                }
             }
+            resultSent = true;
+            result.error(s, null, null);
             //  BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
         }
     }
