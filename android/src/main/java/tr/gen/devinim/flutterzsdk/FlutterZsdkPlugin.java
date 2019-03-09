@@ -66,6 +66,12 @@ public class FlutterZsdkPlugin implements MethodCallHandler {
                 }
                 getBatteryLevel((String) call.argument("mac"), result);
                 break;
+            case "isOnline":
+                if (DEBUG) {
+                    System.out.println("with arguments: {mac:" + call.argument("mac") + "}");
+                }
+                isOnline((String) call.argument("mac"), result);
+                break;
             case "sendZplOverBluetooth":
                 if (DEBUG) {
                     System.out.println("with arguments: {mac:" + call.argument("mac") + ", data: " + call.argument("data") + "}");
@@ -82,10 +88,16 @@ public class FlutterZsdkPlugin implements MethodCallHandler {
     private class DiscoveryRunner extends Thread implements DiscoveryHandler {
 
         Result result;
+        String endMac;
+
         private HashMap<String, String> devices = new HashMap<>();
 
         public void setResult(Result result) {
             this.result = result;
+        }
+
+        public void setEndMac(String mac) {
+            this.endMac = mac;
         }
 
         public void run() {
@@ -112,6 +124,20 @@ public class FlutterZsdkPlugin implements MethodCallHandler {
                     System.out.println(me.getKey() + " => " + me.getValue());
                 }
             }
+
+            if (endMac != null) {
+                if (DEBUG) {
+                    System.out.println("Exit when found is true");
+                }
+                if (discoveredPrinter.address.equalsIgnoreCase(endMac)) {
+                    if (DEBUG) {
+                        System.out.println("Searched mac found. Finishing discovery");
+                    }
+                    devices.clear();
+                    devices.put(discoveredPrinter.address, discoveredPrinter.getDiscoveryDataMap().get("FRIENDLY_NAME"));
+                    discoveryFinished();
+                }
+            }
             devices.put(discoveredPrinter.address, discoveredPrinter.getDiscoveryDataMap().get("FRIENDLY_NAME"));
         }
 
@@ -121,10 +147,7 @@ public class FlutterZsdkPlugin implements MethodCallHandler {
                 System.out.println("ZebraBlDiscoverer: discoveryFinished");
             }
             result.success(devices);
-            if (DEBUG) {
-                System.out.println("Trying to stop discovery ");
-            }
-            BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
+            //  BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
         }
 
         @Override
@@ -136,18 +159,21 @@ public class FlutterZsdkPlugin implements MethodCallHandler {
             if (DEBUG) {
                 System.out.println("Trying to stop discovery ");
             }
-            BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
+            //  BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
         }
+    }
+
+    private void isOnline(String mac, Result result) {
+        DiscoveryRunner runner = new DiscoveryRunner();
+        runner.setResult(result);
+        runner.setEndMac(mac);
+        runner.run();
     }
 
     private void discoverBluetoothDevices(Result result) {
         DiscoveryRunner runner = new DiscoveryRunner();
         runner.setResult(result);
-        try {
-            runner.run();
-        } catch (Exception e) {
-            System.out.println("error: " + e.getMessage());
-        }
+        runner.run();
     }
 
     private void getBatteryLevel(String mac, Result result) {
