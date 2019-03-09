@@ -123,6 +123,8 @@ public class FlutterZsdkPlugin implements MethodCallHandler {
             if (DEBUG) {
                 System.out.println("Trying to kill discovery thread");
                 this.interrupt();
+                System.out.println("Trying to kill discovery thread 222222");
+                this.stop();
             }
         }
 
@@ -138,7 +140,11 @@ public class FlutterZsdkPlugin implements MethodCallHandler {
     private void discoverBluetoothDevices(Result result) {
         DiscoveryRunner runner = new DiscoveryRunner();
         runner.setResult(result);
-        runner.run();
+        try {
+            runner.run();
+        } catch (Exception e) {
+            System.out.println("error: " + e.getMessage());
+        }
     }
 
     private void getBatteryLevel(String mac, Result result) {
