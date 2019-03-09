@@ -78,23 +78,67 @@ public class FlutterZsdkPlugin implements MethodCallHandler {
 
     }
 
-    private void discoverBluetoothDevices(Result result) {
-        final ZebraBlDiscoverer discoverer = new ZebraBlDiscoverer(result);
-        new Thread(new Runnable() {
-            public void run() {
-              //  Looper.prepare();
-                try {
-                    if (DEBUG) {
-                        System.out.println("BluetoothDiscoverer.findPrinters");
-                    }
-                    BluetoothDiscoverer.findPrinters(FlutterZsdkPlugin.this.context, discoverer);
-                } catch (ConnectionException e) {
-                    e.printStackTrace();
-                } finally {
+    private class DiscoveryRunner extends Thread implements DiscoveryHandler {
+
+        Result result;
+        private HashMap<String, String> devices = new HashMap<>();
+
+        public void setResult(Result result) {
+            this.result = result;
+        }
+
+        public void run() {
+
+            //  Looper.prepare();
+            try {
+                if (DEBUG) {
+                    System.out.println("BluetoothDiscoverer.findPrinters");
+                }
+                BluetoothDiscoverer.findPrinters(FlutterZsdkPlugin.this.context, this);
+            } catch (ConnectionException e) {
+                e.printStackTrace();
+            } finally {
                 //    Looper.myLooper().quit();
+            }
+
+        }
+
+        @Override
+        public void foundPrinter(DiscoveredPrinter discoveredPrinter) {
+            if (DEBUG) {
+                System.out.println("ZebraBlDiscoverer: Found Printer:" + discoveredPrinter.address + " || " + discoveredPrinter.toString());
+                for (Map.Entry<String, String> me : discoveredPrinter.getDiscoveryDataMap().entrySet()) {
+                    System.out.println(me.getKey() + " => " + me.getValue());
                 }
             }
-        }).start();
+            devices.put(discoveredPrinter.address, discoveredPrinter.getDiscoveryDataMap().get("FRIENDLY_NAME"));
+        }
+
+        @Override
+        public void discoveryFinished() {
+            if (DEBUG) {
+                System.out.println("ZebraBlDiscoverer: discoveryFinished");
+            }
+            result.success(devices);
+            if (DEBUG) {
+                System.out.println("Trying to kill discovery thread");
+                this.interrupt();
+            }
+        }
+
+        @Override
+        public void discoveryError(String s) {
+            if (DEBUG) {
+                System.out.println("ZebraBlDiscoverer: discoveryError:" + s);
+            }
+            result.error(s, null, null);
+        }
+    }
+
+    private void discoverBluetoothDevices(Result result) {
+        DiscoveryRunner runner = new DiscoveryRunner();
+        runner.setResult(result);
+        runner.run();
     }
 
     private void getBatteryLevel(String mac, Result result) {
@@ -146,44 +190,6 @@ public class FlutterZsdkPlugin implements MethodCallHandler {
         }
 
     }
-
-    private class ZebraBlDiscoverer implements DiscoveryHandler {
-
-        private Result result;
-        private HashMap<String, String> devices = new HashMap<>();
-
-        public ZebraBlDiscoverer(Result result) {
-            this.result = result;
-        }
-
-        @Override
-        public void foundPrinter(DiscoveredPrinter discoveredPrinter) {
-            if (DEBUG) {
-                System.out.println("ZebraBlDiscoverer: Found Printer:" + discoveredPrinter.address + " || " + discoveredPrinter.toString());
-                for (Map.Entry<String, String> me : discoveredPrinter.getDiscoveryDataMap().entrySet()) {
-                    System.out.println(me.getKey() + " => " + me.getValue());
-                }
-            }
-            devices.put(discoveredPrinter.address, discoveredPrinter.getDiscoveryDataMap().get("FRIENDLY_NAME"));
-        }
-
-        @Override
-        public void discoveryFinished() {
-            if (DEBUG) {
-                System.out.println("ZebraBlDiscoverer: discoveryFinished");
-            }
-            result.success(devices);
-        }
-
-        @Override
-        public void discoveryError(String s) {
-            if (DEBUG) {
-                System.out.println("ZebraBlDiscoverer: discoveryError:" + s);
-            }
-            result.error(s, null, null);
-        }
-    }
-
 
     private void sendZplOverBluetooth(final String mac, final String data, final Result result) {
 
