@@ -61,6 +61,7 @@ class FlutterZsdk {
     } else {
       d = await _channel.invokeMethod("discoverBluetoothDevices"); // paired before
     }
+    print(d);
     return d.length() > 0;
   }
 }
