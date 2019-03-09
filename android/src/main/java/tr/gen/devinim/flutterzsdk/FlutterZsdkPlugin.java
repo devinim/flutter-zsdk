@@ -82,7 +82,7 @@ public class FlutterZsdkPlugin implements MethodCallHandler {
         final ZebraBlDiscoverer discoverer = new ZebraBlDiscoverer(result);
         new Thread(new Runnable() {
             public void run() {
-                Looper.prepare();
+              //  Looper.prepare();
                 try {
                     if (DEBUG) {
                         System.out.println("BluetoothDiscoverer.findPrinters");
@@ -91,7 +91,7 @@ public class FlutterZsdkPlugin implements MethodCallHandler {
                 } catch (ConnectionException e) {
                     e.printStackTrace();
                 } finally {
-                    Looper.myLooper().quit();
+                //    Looper.myLooper().quit();
                 }
             }
         }).start();
