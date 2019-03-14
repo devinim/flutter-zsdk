@@ -3,7 +3,7 @@
 #import "MfiBtPrinterConnection.h"
 #import "ZebraPrinter.h"
 #import "ZebraPrinterFactory.h"
-#import <SGD.h>
+#import "SGD.h"
 
 @implementation FlutterZsdkPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
