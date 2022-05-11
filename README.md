@@ -1,5 +1,8 @@
 # flutter_zsdk
 
+**Not actively maintained**  
+I am not maintaining this project. Features of this may or may not work.
+
 Zebra Link OS SDK Flutter Bindings.
 This plugin flutter interface of Link-OS Multiplatform SDK for [Zebra Multiplatform Library](https://www.zebra.com/ap/en/support-downloads/printer-software/link-os-multiplatform-sdk.html)
 
